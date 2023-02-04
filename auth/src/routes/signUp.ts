@@ -1,7 +1,8 @@
 import express, { Request, Response } from "express";
 import { body, validationResult } from "express-validator";
+import { createLogicalAnd } from "typescript";
 import { RequestValidationError } from "../errors/requestValidationError";
-import { DatabaseConnectionError } from "../errors/databaseConnectionError";
+import User from "../models/user";
 
 const router = express.Router();
 
@@ -13,16 +14,24 @@ const middleWareArray = [
 		.withMessage("Password must be between 4 to 20 characters"),
 ];
 
-router.post("/api/users/signUp", middleWareArray, (req: Request, res: Response) => {
+router.post("/api/users/signUp", middleWareArray, async (req: Request, res: Response) => {
 	const errors = validationResult(req);
 
 	if (!errors.isEmpty()) {
 		throw new RequestValidationError(errors.array());
 	}
 	
-	console.log('Creating User');
-	throw new DatabaseConnectionError();
-	res.send('');
+	const { email, password } = req.body;
+	const existingUser = await User.findOne({ email });
+	if (existingUser) {
+		console.log("Email in Use");
+		res.send({ message: "Email in use" });
+		// throw new BadRequestError('Email in Use');
+	}
+
+	const user = User.build({ email, password });
+	await user.save();
+	res.status(201).send(user);
 });
 
 export { router as signUpRouter };
