@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import { body, validationResult } from "express-validator";
-import { createLogicalAnd } from "typescript";
+import { BadRequestError } from "../errors/badRequestError";
 import { RequestValidationError } from "../errors/requestValidationError";
 import User from "../models/user";
 
@@ -26,7 +26,7 @@ router.post("/api/users/signUp", middleWareArray, async (req: Request, res: Resp
 	if (existingUser) {
 		console.log("Email in Use");
 		res.send({ message: "Email in use" });
-		// throw new BadRequestError('Email in Use');
+		throw new BadRequestError('Email in Use');
 	}
 
 	const user = User.build({ email, password });
