@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { Password } from "../services/password";
+import { PasswordHasher } from "../services/password";
 
 // An interface for model
 interface UserInf {
@@ -11,8 +11,8 @@ interface UserInf {
 
 // An interface that describes the properties that a User document has
 interface UserDoc extends mongoose.Document {
-    email: String;
-    password: String;
+    email: string;
+    password: string;
 }
 
 interface UserModel extends mongoose.Model<UserDoc> {
@@ -42,7 +42,7 @@ const userSchema = new mongoose.Schema({
 
 userSchema.pre('save', async function (done) {
     if (this.isModified('password')) {
-        const hashed = await Password.toHash(this.get('password'));
+        const hashed = await PasswordHasher.toHash(this.get('password'));
         this.set('password', hashed);
     }
     done();
