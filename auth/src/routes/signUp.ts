@@ -26,7 +26,6 @@ router.post("/api/users/signUp", middleWareArray, async (req: Request, res: Resp
 	const existingUser = await User.findOne({ email });
 	if (existingUser) {
 		console.log("Email in Use");
-		res.send({ message: "Email in use" });
 		throw new BadRequestError('Email in Use');
 	}
 

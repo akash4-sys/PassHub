@@ -27,10 +27,20 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true
+    },
+}, {        
+    // to edit the document the mongoose returns with every query, we are editing this so we can get consistent response from every query
+    toJSON: {
+        transform(doc, ret) {
+            ret.id = ret._id;
+            delete ret._id;
+            delete ret.password;
+            delete ret.__v;
+        }
     }
 });
 
-userSchema.pre('save', async function(done) {
+userSchema.pre('save', async function (done) {
     if (this.isModified('password')) {
         const hashed = await Password.toHash(this.get('password'));
         this.set('password', hashed);

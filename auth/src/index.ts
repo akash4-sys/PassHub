@@ -3,6 +3,7 @@ import { json } from 'body-parser';
 import 'express-async-errors';
 import mongoose from 'mongoose';
 import cookieSession from 'cookie-session';
+import dotenv from 'dotenv';
 
 import { currentUserRouter } from './routes/currentUser';
 import { signInRouter } from './routes/signIn';
@@ -10,6 +11,9 @@ import { signUpRouter } from './routes/signUp';
 import { signOutRouter } from './routes/signOut';
 import { errorHandler } from './middleware/errorHandler';
 import { NotFoundError } from './errors/notFoundError';
+
+// ! Comment out in docker environment
+dotenv.config();
 
 const app = express();
 app.set('trust proxy', true);       // cause we are using ingress-nginx (otherwise express will consider it insecure)
@@ -42,8 +46,8 @@ const start = async () => {
         throw new Error('JWT_KEY is required');
     }
 
-    const MONGOURL = 'mongodb://auth-mongo-srv:27017/auth';
-    // const MONGOURL = 'mongodb://0.0.0.0:27017/auth';
+    // const MONGOURL = 'mongodb://auth-mongo-srv:27017/auth';
+    const MONGOURL = 'mongodb://0.0.0.0:27017/auth';
     try {
         await mongoose.connect(MONGOURL);
         console.log('Connected to auth database');
