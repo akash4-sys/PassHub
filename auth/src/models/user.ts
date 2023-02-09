@@ -3,8 +3,8 @@ import { PasswordHasher } from "../services/password";
 
 // An interface for model
 interface UserInf {
-    email: String,
-    password: String
+    email: string,
+    password: string
 }
 
 // An interface that describes the properties that a user model has
