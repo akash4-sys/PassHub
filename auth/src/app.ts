@@ -3,6 +3,7 @@ import { json } from 'body-parser';
 import 'express-async-errors';
 import cookieSession from 'cookie-session';
 import dotenv from 'dotenv';
+import cors from 'cors';
 
 import { currentUserRouter } from './routes/currentUser';
 import { signInRouter } from './routes/signIn';
@@ -19,8 +20,10 @@ app.set('trust proxy', true);       // cause we are using ingress-nginx (otherwi
 app.use(json());
 app.use(cookieSession({
     signed: false,
-    secure: process.env.NODE_ENV !== 'test'
+    secure: false           // true ? set cookie only on https connection : can set cookie on http
+    // secure: process.env.NODE_ENV !== 'test'
 }));
+app.use(cors());        // added by me since missing during nextjs testing not sure if can cause err in future
 
 app.use(currentUserRouter);
 app.use(signInRouter);
